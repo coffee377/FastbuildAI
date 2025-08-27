@@ -15,7 +15,9 @@ import { Body, Post, Res } from "@nestjs/common";
 import { getProvider, TextGenerator } from "@sdk/ai";
 import { convertMCPToolsToOpenAI, McpServer, MCPTool } from "@sdk/ai/utils/mcp/sse";
 import { Response } from "express";
-import { ChatCompletionFunctionTool, ChatCompletionMessageParam } from "openai/resources/index";
+import { ChatCompletionFunctionTool, ChatCompletionMessageParam } from "openai/resources";
+import { ChatCompletionCreateParams } from "openai/resources";
+import * as Shared from "openai/src/resources/shared";
 
 /**
  * AI聊天控制器（前台）
@@ -182,6 +184,11 @@ export class AiChatMessageController extends BaseController {
             let finalResponse: any = null;
             let hasToolCalls = false;
 
+            const metadata: Shared.Metadata = {
+                userId: playground.id,
+                userName: playground.username,
+            };
+
             do {
                 hasToolCalls = false;
 
@@ -191,8 +198,9 @@ export class AiChatMessageController extends BaseController {
                     messages: currentMessages,
                     tools: tools.length > 0 ? tools : [],
                     tool_choice: "auto",
+                    metadata: metadata,
                     ...opts,
-                });
+                } as ChatCompletionCreateParams);
 
                 finalResponse = response;
 
@@ -583,6 +591,11 @@ export class AiChatMessageController extends BaseController {
             let reasoningStartTime: number | null = null; // 深度思考开始时间
             let reasoningEndTime: number | null = null; // 深度思考结束时间
 
+            const metadata: Shared.Metadata = {
+                userId: playground.id,
+                userName: playground.username,
+            };
+
             do {
                 hasToolCalls = false;
                 const stream = await client.chat.stream({
@@ -590,8 +603,9 @@ export class AiChatMessageController extends BaseController {
                     messages: currentMessages,
                     tools: tools.length > 0 ? tools : undefined,
                     tool_choice: "auto",
+                    metadata: metadata,
                     ...opts,
-                });
+                } as ChatCompletionCreateParams);
 
                 // 收集流式响应
                 for await (const chunk of stream) {
@@ -941,7 +955,23 @@ export class AiChatMessageController extends BaseController {
         }
     }
 
+    private getTime = (date = new Date()) => {
+        // 获取月份（0-11），加1后转为两位数
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        // 获取秒数（0-59），转为两位数
+        const days = String(date.getDay()).padStart(2, "0");
+        // 获取小时（0-23），转为两位数
+        const hours = String(date.getHours()).padStart(2, "0");
+        // 获取分钟（0-59），转为两位数
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        // 按照 MM/ss HH:mm 格式拼接
+        return `${month}/${days} ${hours}:${minutes}`;
+    };
+
     private async aiGenerateTitle(model, messages: ChatCompletionMessageParam[]): Promise<string> {
+        const time = this.getTime();
+        return `晶灵对话 ${time}`;
+        // eslint-disable-next-line no-unreachable
         const content = messages.find((item) => item.role === "user")?.content as string;
         try {
             if (!content) {
@@ -968,7 +998,7 @@ export class AiChatMessageController extends BaseController {
                         role: "user",
                         content: content.slice(0, 1000),
                     },
-                ],
+                ] as ChatCompletionMessageParam[],
             });
 
             const result = response.choices[0].message.content;
