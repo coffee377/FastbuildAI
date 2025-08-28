@@ -41,7 +41,7 @@ defineOptions({ inheritAttrs: false });
             <Logo v-else class="text-background size-7" :fontControlled="false" filled />
         </div>
         <div
-            class="flex flex-col gap-0.5 truncate leading-none whitespace-nowrap"
+            class="flex flex-1 flex-col gap-0.5 truncate leading-none whitespace-nowrap"
             :class="{ hidden: props.collapsed }"
         >
             <span class="text-sm font-bold">{{ appStore.siteConfig?.webinfo.name }}</span>
@@ -49,6 +49,7 @@ defineOptions({ inheritAttrs: false });
                 {{ $t("console-common.admin") }}
             </span>
         </div>
+        <div class="text-xs font-bold text-indigo-500">返回对话</div>
     </h1>
     <h1 v-if="props.layout === 'mixture'" class="flex items-center truncate" @click="backToHome">
         <template v-if="appStore.siteConfig?.webinfo.logo">
