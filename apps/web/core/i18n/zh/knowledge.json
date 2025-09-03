@@ -1,0 +1,36 @@
+{
+    "title": "知识库",
+    "subtitle": "汇聚优质 AI 知识，深化智能认知",
+    "searchPlaceholder": "搜索知识库名称或 ID ...",
+    "card": {
+        "documents": "文档",
+        "members": "成员"
+    },
+    "menu": {
+        "settings": "设置",
+        "documents": "文档",
+        "members": "团队成员"
+    },
+    "create": {
+        "title": "创建知识库",
+        "desc": "导入您自己的文本数据或通过文件上传您的文档进行创建知识库"
+    },
+    "delete": {
+        "title": "删除知识库",
+        "desc": "确定要删除选中的知识库吗？删除后将无法恢复，包括所有文档和相关数据。"
+    },
+    "graph":{
+        "cluster": {
+            "status": "集群",
+            "statusTip": "知识库图集群状态"
+        },
+        "sync": {
+            "status": "同步",
+            "statusTip": "知识库图同步状态"
+        },
+        "clusterStatus": "知识库图集群状态",
+        "syncStatus": "知识库图同步状态"
+    },
+    "retrievalMode": "知识库内容检索模式",
+    "storageSize": "存储空间"
+}

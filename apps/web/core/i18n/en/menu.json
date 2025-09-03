@@ -7,5 +7,6 @@
     "buyRecord": "Orders",
     "powerDetail": "Usage",
     "agent": "Agent",
-    "chat": "Chat"
+    "chat": "Chat",
+    "knowledge": "Knowledge"
 }
