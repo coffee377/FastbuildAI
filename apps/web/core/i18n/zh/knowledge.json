@@ -48,5 +48,18 @@
         "graphSyncStatus": "同步状态",
         "createdAt": "创建时间",
         "updatedAt": "更新时间"
+    },
+    "documents": {
+        "table": {
+            "fileName": "文件名",
+            "fileSize": "文件大小",
+            "fileType": "文件类型",
+            "originalFileName": "原始文件",
+            "ingestionStatus": "摄入状态",
+            "extractionStatus": "提取状态",
+            "createdAt": "上传时间"
+        },
+        "download": "下载",
+        "delete": "删除"
     }
 }

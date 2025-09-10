@@ -35,7 +35,7 @@ const graphClusterStatusColor = computed(() => {
 
 // 查看详情
 const handleViewDetail = () => {
-    const routePath = `/public/knowledge/${props.data.id}`;
+    const routePath = `/public/knowledge/${props.data.id}/documents`;
     !!routePath && router.push(routePath);
 };
 

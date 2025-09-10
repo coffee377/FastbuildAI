@@ -3,6 +3,7 @@ import type {
     WrappedBooleanResponse,
     WrappedCollectionResponse,
     WrappedCollectionsResponse,
+    WrappedDocumentsResponse,
     WrappedIngestionResponse,
 } from "r2r-js";
 import { r2rClient } from "r2r-js";
@@ -11,8 +12,6 @@ import type { Pagination } from "@/models";
 
 // http://localhost:7272 or the address that you are running the R2R server
 export const client = new r2rClient("http://10.1.150.105:7272");
-
-// await client.users.login({ email: "admin@example.com", password: "change_me_immediately" });
 
 /**
  * 查询知识库请求参数
@@ -24,6 +23,13 @@ export interface QueryKnowledgeParams extends Pagination {
     showAll?: boolean;
 }
 
+function getOffsetAndLimit(rest: Pagination): { offset: number; limit: number } {
+    const { page, pageSize } = rest;
+    const offset = ((page || 1) - 1) * (pageSize || 10);
+    const limit = pageSize ?? 10;
+    return { offset, limit };
+}
+
 /**
  * 获取知识库列表
  * @param params 查询参数
@@ -31,10 +37,9 @@ export interface QueryKnowledgeParams extends Pagination {
 export function apiGetKnowledgeList(
     params: QueryKnowledgeParams,
 ): Promise<WrappedCollectionsResponse> {
-    const { page, pageSize, showAll = true } = params;
-    const offset = ((page || 1) - 1) * (pageSize || 10);
-    const limit = pageSize ?? 10;
+    const { keyword, showAll = true, ...rest } = params;
     const ownerOnly = !showAll;
+    const { offset, limit } = getOffsetAndLimit(rest);
     return client.collections.list({ offset, limit, ownerOnly });
 }
 
@@ -71,11 +76,82 @@ export function apiDeleteKnowledge(id: string): Promise<WrappedBooleanResponse> 
     return client.collections.delete({ id });
 }
 
+async function convertFile(file: File) {
+    // todo 调用 上传转换接口 http://192.168.44.180:8000/docs
+    // 下载文件
+    return file;
+}
+
 /**
  * 创建文档
  * @returns 创建的文档信息
- * @param file
+ * @param uploadFiles
+ * @param knowledgeId
  */
-export function apiCreateDocument(file: File): Promise<WrappedIngestionResponse> {
-    return client.documents.create({ file });
+export async function apiCreateDocument(
+    uploadFiles: File | File[],
+    knowledgeId: string,
+): Promise<void> {
+    const files = Array.isArray(uploadFiles) ? uploadFiles : [uploadFiles];
+    for (let file of files) {
+        file = await convertFile(file);
+        const {
+            results: { documentId },
+        } = await client.documents.create({ file });
+        // 文档绑定知识库
+        await client.collections.addDocument({ id: knowledgeId, documentId: documentId });
+    }
+}
+
+/**
+ * 查询知识库文档请求参数
+ */
+export interface QueryDocumentParams extends Pagination {
+    keyword?: string;
+    /**
+     * 知识库 id
+     */
+    knowledgeId: string;
+}
+
+/**
+ * 获取知识库文档
+ * @returns 文档信息
+ * @param params
+ */
+export function apiGetDocumentList(params: QueryDocumentParams): Promise<WrappedDocumentsResponse> {
+    const { knowledgeId, ...rest } = params;
+    const { offset, limit } = getOffsetAndLimit(rest);
+    return client.collections.listDocuments({ id: knowledgeId, offset, limit });
+}
+
+/**
+ * 下载文档
+ * @param id
+ */
+export function apiDownloadDocument(id: string): Promise<Blob> {
+    return client.documents.download({ id });
+}
+
+/**
+ * 删除文档
+ * @param id 文档ID
+ * @param knowledgeId
+ * @returns 删除结果
+ */
+export async function apiDeleteDocument(
+    id: string,
+    knowledgeId: string,
+): Promise<{ success: boolean }> {
+    try {
+        if (id) {
+            await client.documents.delete({ id });
+        }
+        if (knowledgeId && id) {
+            await client.collections.removeDocument({ id: knowledgeId, documentId: id });
+        }
+        return Promise.resolve({ success: true });
+    } catch (e) {
+        return Promise.resolve({ success: false });
+    }
 }

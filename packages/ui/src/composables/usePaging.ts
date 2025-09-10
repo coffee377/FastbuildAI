@@ -32,8 +32,8 @@ export function usePaging<T = any>(options: Options) {
             ...params,
         })
             .then((res: any) => {
-                paging.total = res?.total;
-                paging.items = res?.items;
+                paging.total = res?.total ?? res?.total_entries;
+                paging.items = res?.items ?? res?.results;
                 paging.extend = res?.extend;
                 paging.needPolling = res?.needPolling || false;
                 return Promise.resolve(res);
@@ -46,16 +46,16 @@ export function usePaging<T = any>(options: Options) {
             });
     };
     // 重置为第一页
-    const resetPage = () => {
+    const resetPage = async () => {
         paging.page = 1;
-        getLists();
+        await getLists();
     };
     // 重置参数
-    const resetParams = () => {
+    const resetParams = async () => {
         Object.keys(paramsInit).forEach((item) => {
             params[item] = paramsInit[item];
         });
-        getLists();
+        await getLists();
     };
     return {
         paging,
