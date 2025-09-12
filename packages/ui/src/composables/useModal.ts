@@ -55,7 +55,6 @@ export function useModal(options: ModalOptions = {}) {
 
     // 合并选项
     const mergedOptions = { ...defaultOptions, ...options };
-    console.log(mergedOptions);
     // 创建一个 overlay 实例
     const overlay = useOverlay();
     let resolveConfirm: (value: boolean) => void;
