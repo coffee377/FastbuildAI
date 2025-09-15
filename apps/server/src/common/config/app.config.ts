@@ -27,6 +27,7 @@ export interface AppConfig {
         password: string;
         /** 数据库名称 */
         database: string;
+        schema?: string;
         /** 是否自动同步实体到数据库 */
         synchronize: boolean;
         /** 是否启用日志 */
@@ -46,6 +47,7 @@ export const appConfig: AppConfig = {
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE,
+        schema: process.env.DB_SCHEMA,
         synchronize: process.env.DB_SYNCHRONIZE === "true",
         logging: process.env.DB_LOGGING === "true",
         namingStrategy: new SnakeNamingStrategy(),

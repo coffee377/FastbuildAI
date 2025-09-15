@@ -16,6 +16,7 @@
         "DB_USERNAME",
         "DB_PASSWORD",
         "DB_DATABASE",
+        "DB_SCHEMA",
         "DB_SYNCHRONIZE",
         "DB_LOGGING",
         "REDIS_HOST",
