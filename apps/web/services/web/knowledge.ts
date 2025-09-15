@@ -108,7 +108,7 @@ async function transformFile(file: File): Promise<{ file: File; meta: any }> {
     });
 
     const meta = {
-        filename: removeFileExtension(file.name),
+        title: file.name,
     };
 
     const json: TransformResult = (await res.json()) ?? {};
@@ -129,6 +129,7 @@ async function transformFile(file: File): Promise<{ file: File; meta: any }> {
         // const fileType = blob.type;
         const f = decodeURI(url.pathname);
         const filename = f.substring(f.lastIndexOf("/") + 1);
+        meta.title = filename;
         // File 构造函数：(文件内容数组, 文件名, 选项)
         const file = new File([blob], filename);
         return { file, meta };
