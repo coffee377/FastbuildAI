@@ -279,6 +279,17 @@ export interface QueryKnowledgeUserParams extends Pagination {
     knowledgeId: string;
 }
 
+/**
+ * 列出所有用户
+ */
+export async function apiLisAllUser(): Promise<WrappedUsersResponse> {
+    return client.users.list();
+}
+
+/**
+ * 列出知识库用户
+ * @param params
+ */
 export async function apiListKnowledgeUser(
     params: QueryKnowledgeUserParams,
 ): Promise<WrappedUsersResponse> {
@@ -287,9 +298,26 @@ export async function apiListKnowledgeUser(
     return client.collections.listUsers({ id: knowledgeId, offset, limit });
 }
 
+/**
+ * 删除知识库用户
+ * @param id
+ * @param knowledgeId
+ */
 export async function apiDeleteKnowledgeUser(
     id: string,
     knowledgeId: string,
 ): Promise<WrappedBooleanResponse> {
     return client.users.removeFromCollection({ id, collectionId: knowledgeId });
+}
+
+/**
+ * 添加知识库用户
+ * @param userId
+ * @param knowledgeId
+ */
+export async function apiAddKnowledgeUser(
+    userId: string,
+    knowledgeId: string,
+): Promise<WrappedBooleanResponse> {
+    return client.users.addToCollection({ id: userId, collectionId: knowledgeId });
 }
