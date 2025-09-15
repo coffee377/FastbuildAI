@@ -68,7 +68,7 @@ definePageMeta({ layout: "knowledge" });
                 v-if="paging.items?.length"
                 v-for="user in paging.items"
                 :key="user.id"
-                class="group relative rounded-lg bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg"
+                class="group relative rounded-lg bg-white px-4 py-6 shadow-md transition-shadow duration-300 hover:shadow-lg"
             >
                 <div class="mb-4 flex items-center gap-2">
                     <!-- 添加默认头像，使用邮箱作为seed确保头像固定 -->
@@ -143,7 +143,7 @@ definePageMeta({ layout: "knowledge" });
                 </div>
 
                 <div
-                    class="invisible absolute right-4 bottom-4 flex cursor-pointer items-center justify-end space-x-1 px-2 py-3 text-red-500 transition-colors duration-300 group-hover:visible hover:text-red-700"
+                    class="invisible absolute right-3 bottom-0 flex cursor-pointer items-center justify-end space-x-1 px-2 py-3 text-red-500 transition-colors duration-300 group-hover:visible hover:text-red-700"
                     @click="handleRemoveUser(user.id)"
                 >
                     <UButton
