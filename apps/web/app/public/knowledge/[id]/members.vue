@@ -102,7 +102,7 @@ const handleClose = () => {
     resetUserDrawer();
 };
 
-definePageMeta({ layout: "knowledge" });
+definePageMeta({ layout: "knowledge", auth: false });
 </script>
 
 <template>

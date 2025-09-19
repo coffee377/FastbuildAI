@@ -4,13 +4,14 @@ import { apiGetKnowledgeDetail } from "@/services/web/knowledge";
 const route = useRoute();
 const router = useRouter();
 const { t } = useI18n();
-const { hasAccessByCodes } = useAccessControl();
 const knowledgeId = computed(() => (route.params as Record<string, string>).id);
 const collapsed = ref<boolean>(false);
 
 const { data, pending, refresh } = await useAsyncData(`dataset-detail-${knowledgeId.value}`, () =>
     apiGetKnowledgeDetail(knowledgeId.value),
 );
+
+onMounted(refresh);
 
 function convertUtcToBeijingTime(utcTimeStr: string) {
     // 1. 解析UTC时间字符串为Date对象
@@ -138,13 +139,11 @@ provide("knowledge", refresh);
                             //     icon: 'i-lucide-settings-2',
                             //     to: `/public/knowledge/${knowledgeId}/explore`,
                             // },
-                            // hasAccessByCodes(['ai-datasets:update'])
-                            //     ? {
-                            //           label: $t('knowledge.menu.settings'),
-                            //           icon: 'i-lucide-settings-2',
-                            //           to: `/public/knowledge/${knowledgeId}/settings`,
-                            //       }
-                            //     : null,
+                            // {
+                            //     label: $t('knowledge.menu.settings'),
+                            //     icon: 'i-lucide-settings-2',
+                            //     to: `/public/knowledge/${knowledgeId}/settings`,
+                            // },
                         ].filter(Boolean) as NavigationMenuItem[]
                     "
                     class="data-[orientation=vertical]:w-full"
@@ -186,17 +185,10 @@ provide("knowledge", refresh);
     </div>
     <div v-else class="flex h-[calc(100vh-6rem)] items-center justify-center text-center">
         <div class="max-w-md">
-            <h1 class="text-error mb-4 text-6xl font-extrabold">403</h1>
-            <p class="mb-2 text-xl font-semibold text-gray-800">
-                {{ $t("console-ai-datasets.permission.title") }}
-            </p>
-            <p class="text-muted-foreground mb-6">
-                {{ $t("console-ai-datasets.permission.description") }}
-            </p>
-
-            <UButton to="/" color="primary" size="lg" icon="i-heroicons-arrow-left">
-                {{ $t("console-ai-datasets.permission.back") }}
-            </UButton>
+            <h1 class="mb-4 text-6xl font-extrabold text-blue-300">
+                <UIcon name="i-lucide-loader" class="animate-spin duration-[10s]" />
+            </h1>
+            <p class="mb-2 text-xl font-semibold text-gray-500">数据加载中……</p>
         </div>
     </div>
 </template>

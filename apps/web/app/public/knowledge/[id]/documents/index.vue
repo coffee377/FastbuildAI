@@ -273,7 +273,7 @@ const handleRowClick = (row: TableRow<DocumentResponse>) => {};
 // 初始化
 onMounted(getLists);
 
-definePageMeta({ layout: "knowledge" });
+definePageMeta({ layout: "knowledge", auth: false });
 </script>
 
 <template>
