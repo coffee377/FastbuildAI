@@ -5,7 +5,7 @@ import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 
-import type { LoginResponse } from "@/models/user";
+import type { LoginResponse, SystemRegisrerAccountParams } from "@/models/user";
 import { apiAuthRegister } from "@/services/web/user";
 
 const PrivacyTerms = defineAsyncComponent(() => import("../privacy-terms.vue"));
@@ -26,9 +26,9 @@ const registerSchema = object({
         .required(t("login.validation.accountRequired"))
         .min(3, t("login.validation.accountMinLength"))
         .max(20, t("login.validation.accountMaxLength")),
-    // email: string()
-    //   .required(t("login.validation.emailRequired"))
-    //   .email(t("login.validation.emailInvalid")),
+    email: string()
+        .required(t("login.validation.emailRequired"))
+        .email(t("login.validation.emailInvalid")),
     password: string()
         .required(t("login.validation.passwordRequired"))
         .min(6, t("login.validation.passwordMinLength"))
@@ -45,7 +45,7 @@ const registerSchema = object({
 // 表单状态
 const registerState = reactive({
     username: "",
-    // email: '',
+    email: "",
     password: "",
     confirmPassword: "",
 });
@@ -63,7 +63,7 @@ const { lockFn: onRegisterSubmit, isLock } = useLockFn(async () => {
         const data = await apiAuthRegister({
             terminal: 1,
             ...registerState,
-        });
+        } as SystemRegisrerAccountParams);
 
         // 注册成功后跳转到登录页
         emits("success", { ...data, ...data.user });
@@ -110,6 +110,14 @@ const { lockFn: onRegisterSubmit, isLock } = useLockFn(async () => {
                         class="w-full"
                         size="lg"
                         :placeholder="$t('login.placeholders.enterAccount')"
+                    />
+                </UFormField>
+                <UFormField :label="$t('login.email')" name="email" required>
+                    <UInput
+                        v-model="registerState.email"
+                        class="w-full"
+                        size="lg"
+                        :placeholder="$t('login.placeholders.enterEmail')"
                     />
                 </UFormField>
 

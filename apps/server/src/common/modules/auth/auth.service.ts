@@ -151,6 +151,7 @@ export class AuthService extends BaseService<User> {
         const savedUser = await this.create(
             {
                 username: registerDto.username,
+                email: registerDto.email,
                 password: hashedPassword,
                 nickname: randomNickname,
                 status: BooleanNumber.YES, // 默认启用
@@ -209,7 +210,7 @@ export class AuthService extends BaseService<User> {
     ) {
         // 查找用户
         const user = await this.findOne({
-            where: { username },
+            where: [{ username: username }, { email: username }],
             relations: ["role", "permissions"],
         });
 

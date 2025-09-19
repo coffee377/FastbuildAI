@@ -15,11 +15,23 @@ import app from "@/common/config";
 import type { Pagination } from "@/models";
 
 // http://localhost:7272 or the address that you are running the R2R server
-export const client = new r2rClient(app.R2R_API_PREFIX);
-// client.users.login({ email: "coffee377@dingtalk.com", password: "coffee377" }).then((res) => {
-//     // console.log(res.results);
-// });
-// client.users.logout();
+export const client = new r2rClient(app.R2R_API_PREFIX, false, {
+    enableAutoRefresh: true,
+    getTokensCallback: () => {
+        return {
+            accessToken: localStorage.getItem("r2r_access_token"),
+            refreshToken: localStorage.getItem("r2r_refresh_token"),
+        };
+    },
+    setTokensCallback: (accessToken, refreshToken) => {
+        if (accessToken) {
+            localStorage.setItem("r2r_access_token", accessToken);
+        }
+        if (refreshToken) {
+            localStorage.setItem("r2r_refresh_token", refreshToken);
+        }
+    },
+});
 
 /**
  * 查询知识库请求参数

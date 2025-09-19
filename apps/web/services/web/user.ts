@@ -8,6 +8,7 @@ import type {
     WechatLoginCode,
     WechatLoginTicket,
 } from "@/models/user.d.ts";
+import { client } from "@/services/web/knowledge";
 
 // ==================== 用户信息相关 API ====================
 
@@ -96,14 +97,25 @@ export function apiSmsSend(params?: {
 }
 
 // ==================== 账号认证相关 API ====================
-
+const r2r = async (email: string, register: boolean = false) => {
+    const password = email?.trim().split("@")[0] + "@123456";
+    if (email && password) {
+        if (register) {
+            await client.users.create({ email, password });
+        }
+        await client.users.login({ email, password });
+    }
+};
 /**
  * 账号/手机号登录
  * @param params 登录参数
  * @returns 登录结果
  */
 export function apiAuthLogin(params?: SystemLoginAccountParams): Promise<LoginResponse> {
-    return useWebPost("/auth/login", params);
+    return useWebPost("/auth/login", params).then(async (res: LoginResponse) => {
+        await r2r(res.user.email!);
+        return Promise.resolve(res);
+    });
 }
 
 /**
@@ -115,7 +127,12 @@ export function apiAuthRegister(params?: SystemRegisrerAccountParams): Promise<{
     token: string;
     user: LoginResponse;
 }> {
-    return useWebPost("/auth/register", params);
+    return useWebPost("/auth/register", params).then(
+        async (res: { token: string; user: LoginResponse }) => {
+            await r2r(res.user.email!, true);
+            return Promise.resolve(res);
+        },
+    );
 }
 
 // ==================== 用户操作相关 API ====================

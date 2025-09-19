@@ -5,6 +5,7 @@ import { ROUTES } from "@/common/constants/routes.constant";
 import { STORAGE_KEYS } from "@/common/constants/storage.constant";
 import type { UserInfo } from "@/models/user";
 import { apiGetCurrentUserInfo } from "@/services/web/user";
+import { client } from "@/services/web/knowledge";
 
 export const useUserStore = defineStore("auth", () => {
     /** 过期时间 */
@@ -93,10 +94,14 @@ export const useUserStore = defineStore("auth", () => {
         const needRedirect = route?.meta.auth !== false;
         if (!needRedirect) return;
 
-        return useRouter().replace({
-            path: `${ROUTES.HOME}?redirect=${route?.fullPath}`,
-            replace: true,
-        });
+        return useRouter()
+            .replace({
+                path: `${ROUTES.HOME}?redirect=${route?.fullPath}`,
+                replace: true,
+            })
+            .then(() => {
+                client.users.logout();
+            });
     };
 
     /** 去登录 */
