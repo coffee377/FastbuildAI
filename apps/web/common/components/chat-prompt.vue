@@ -112,7 +112,6 @@ onMounted(() =>
         :class="isFocused ? 'ring-primary/15 border-primary ring-3' : 'border-border'"
         @click.stop="handleFocus"
     >
-        <div class="border border-dashed border-red-500">{{ meta }}</div>
         <div class="flex items-center gap-2">
             <slot name="panel-top"> </slot>
         </div>
@@ -140,6 +139,7 @@ onMounted(() =>
                 <slot name="panel-left">
                     <!--  -->
                 </slot>
+                <KnowledgeSelect v-model="meta.kb" />
                 <UCheckbox label="启用会话记忆" v-model="meta.memory" />
                 <UCheckbox label="启用问题重写" v-model="meta.rewrite" />
             </div>
