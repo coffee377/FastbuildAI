@@ -1,3 +1,6 @@
+build:
+	docker build -t jqai:v1.0.0 .
+
 sed:
 	sed -i '.bak' 's/public\./fastbuildai\./g' fb_tables_backup.sql;
 
