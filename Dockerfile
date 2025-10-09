@@ -43,12 +43,12 @@ RUN pnpm -F ./apps/server run build \
     && pnpm -F ./apps/web run generate
 
 # 04. 生产层
-FROM base AS production
-WORKDIR /code
-COPY --from=build /code/.node_modules ./
-COPY --from=build /code/apps/server/dist ./apps/server/dist
-COPY --from=build /code/apps/server/data ./apps/server/data
-COPY --from=build /code/apps/web/.output/public/ ./public/web
+#FROM base AS production
+#WORKDIR /code
+#COPY --from=build /code/.node_modules ./
+#COPY --from=build /code/apps/server/dist ./apps/server/dist
+#COPY --from=build /code/apps/server/data ./apps/server/data
+#COPY --from=build /code/apps/web/.output/public/ ./public/web
 
 ENV NODE_ENV=production \
     TZ=Asia/Shanghai \
@@ -68,5 +68,5 @@ EXPOSE 4090
 
 # 测试镜像命令
 WORKDIR apps/server
-#CMD [ "node", "dist/main.js" ]
-CMD [ "sleep", "infinity" ]
+CMD [ "node", "dist/main.js" ]
+#CMD [ "sleep", "infinity" ]
