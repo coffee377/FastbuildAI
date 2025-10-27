@@ -82,7 +82,7 @@ const schema = computed(() => {
             .required(t("console-user.form.usernameRequired"))
             .matches(/^[a-zA-Z0-9_]*$/, t("console-user.form.usernameFormat")),
         nickname: string().required(t("console-user.form.nicknameRequired")),
-        email: string().email(t("console-user.form.emailFormat")).nullable(),
+        email: string().email(t("console-user.form.emailFormat")).required("邮箱不能为空"),
 
         phone: string()
             .test("phone-format", t("console-user.form.phoneFormat"), function (value) {
@@ -266,7 +266,7 @@ onMounted(() => getRoleList());
                         </UFormField>
 
                         <!-- 邮箱 -->
-                        <UFormField :label="t('console-user.form.email')" name="email">
+                        <UFormField :label="t('console-user.form.email')" name="email" required>
                             <UInput
                                 v-model="formData.email"
                                 :placeholder="t('console-user.form.emailInput')"

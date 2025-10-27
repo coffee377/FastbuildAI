@@ -52,7 +52,7 @@
         "passwordInput": "请输入密码",
         "passwordRequired": "密码不能为空",
         "passwordMinLength": "密码至少6位",
-        "passwordHelp": "密码至少6位，建议包含字母和数字",
+        "passwordHelp": "密码至少6位，必需包含字母和数字",
         "role": "角色",
         "power": "剩余算力",
         "realName": "真实姓名",

@@ -8,6 +8,7 @@ import type {
     UserQueryRequest,
     UserUpdateRequest,
 } from "@/models/user";
+import { client } from "@/services/web/knowledge";
 
 /**
  * 获取用户列表
@@ -46,8 +47,14 @@ export function apiGetUserDetail(id: string): Promise<UserInfo> {
  * @param {UserCreateRequest} data 创建数据
  * @returns {Promise<UserInfo>} 创建结果
  */
-export function apiCreateUser(data: UserCreateRequest): Promise<UserInfo> {
-    return useConsolePost("/users", data);
+export async function apiCreateUser(data: UserCreateRequest): Promise<UserInfo> {
+    const user = await useConsolePost<UserInfo>("/users", data);
+    const email = user.email;
+    const password = email?.trim().split("@")[0] + "@123456";
+    if (email && password) {
+        await client.users.create({ email, password });
+    }
+    return user;
 }
 
 /**
@@ -67,7 +74,7 @@ export function apiUpdateUser(id: string, data: UserUpdateRequest): Promise<User
  * @param {string} id 用户ID
  * @returns {Promise<{ success: boolean }>} 删除结果
  */
-export function apiDeleteUser(id: string): Promise<{ success: boolean }> {
+export async function apiDeleteUser(id: string): Promise<{ success: boolean }> {
     return useConsoleDelete(`/users/${id}`);
 }
 
