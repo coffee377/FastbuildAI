@@ -46,7 +46,7 @@ interface ChatPromptProps {
 
 const props = withDefaults(defineProps<ChatPromptProps>(), {
     modelValue: "",
-    metaConfiguration: () => ({}),
+    metaConfiguration: () => ({ memory: true }),
     placeholder: "",
     isLoading: false,
     rows: 1,
