@@ -44,6 +44,14 @@ const collections = computed(() => {
 
 onMounted(() =>
     getLists().then(() => {
+        if (props.modelValue?.id) {
+            const item = unref(collections).find((item) => item.id == props.modelValue.id);
+            if (item) {
+                selected.value = item;
+                emit("update:modelValue", { id: item?.id, name: item?.name });
+                return;
+            }
+        }
         if (props.defaultSelected && unref(collections).length > 0) {
             const item = unref(collections)[0];
             selected.value = item;

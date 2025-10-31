@@ -106,6 +106,8 @@ async function createChat(prompt: string, metadata?: Record<string, any>) {
             id: chat.id,
         });
 
+        useLocalStorage(chat.id, metadata);
+
         refreshNuxtData("chats");
         navigateTo({
             path: `/chat/${chat.id}`,

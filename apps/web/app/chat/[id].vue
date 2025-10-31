@@ -35,7 +35,6 @@ const quickMenu = ref<QuickMenu>();
 
 // 提取链接 query
 const modelId = ref("");
-const meta = ref<MetaConfiguration>({});
 
 const { data: messagesData, pending: loading } = await useAsyncData(
     `chat-messages-${currentConversationId.value}`,
@@ -59,14 +58,15 @@ const { data: currentConversation } = await useAsyncData(
     () => apiGetAiConversationDetail(currentConversationId.value as string),
 );
 
-watch(
-    currentConversation,
-    (val: Record<string, any> = {}) => {
-        // const { metadata } = val;
-        // meta.value = metadata ?? {};
-        meta.value = { memory: true };
+const meta = useLocalStorage<MetaConfiguration>(
+    currentConversationId,
+    {
+        memory: true,
+        rewrite: false,
     },
-    { deep: true, immediate: true },
+    {
+        initOnMounted: true,
+    },
 );
 
 const { data: chatConfig } = await useAsyncData("chat-config", () => apiGetChatConfig());
@@ -391,7 +391,6 @@ definePageMeta({ activePath: "/" });
             </ProScrollArea>
 
             <div class="w-full max-w-[800px]">
-                <div>{{ currentConversation["metadata"] }}</div>
                 <ChatPrompt
                     v-model="input"
                     :meta-configuration="meta"
