@@ -10,7 +10,7 @@ import type {
     ChatCompletionCreateParams,
     ChatCompletionFunctionTool,
     ChatCompletionMessageParam,
-} from "openai/resources/index";
+} from "openai/resources";
 
 import { ToolCallCommandHandler } from "./tool-call.handler";
 
@@ -51,6 +51,7 @@ export class ChatCompletionCommandHandler {
             string,
             { server: AiMcpServer; tool: MCPTool; mcpServer: McpServerSSE | McpServerHttp }
         >;
+        metadata?: Record<string, any>;
     }): Promise<ChatCompletionResult> {
         const { model, messages, tools, toolToServerMap } = params;
 
@@ -71,6 +72,7 @@ export class ChatCompletionCommandHandler {
             const chatParams: ChatCompletionCreateParams = {
                 model: model.model,
                 messages: currentMessages,
+                metadata: params.metadata,
                 ...opts,
             };
 
@@ -160,6 +162,7 @@ export class ChatCompletionCommandHandler {
                 string,
                 { server: AiMcpServer; tool: MCPTool; mcpServer: McpServerSSE | McpServerHttp }
             >;
+            metadata?: Record<string, any>;
         },
         res: Response,
     ): Promise<{
@@ -199,6 +202,7 @@ export class ChatCompletionCommandHandler {
             const chatParams: ChatCompletionCreateParams = {
                 model: model.model,
                 messages: currentMessages,
+                metadata: params.metadata,
                 ...opts,
             };
 

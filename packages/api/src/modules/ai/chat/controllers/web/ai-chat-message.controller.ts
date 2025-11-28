@@ -97,6 +97,11 @@ export class AiChatMessageWebController extends BaseController {
                 messages: limitedMessages,
                 tools,
                 toolToServerMap,
+                metadata: {
+                    userId: user.id,
+                    userName: user.username,
+                    ...(dto.metadata ?? {}),
+                },
             });
 
             // 7. 计算消耗的积分
@@ -285,6 +290,11 @@ export class AiChatMessageWebController extends BaseController {
                     messages: limitedMessages,
                     tools,
                     toolToServerMap,
+                    metadata: {
+                        userId: user.id,
+                        userName: user.username,
+                        ...(dto.metadata ?? {}),
+                    },
                 },
                 res,
             );
