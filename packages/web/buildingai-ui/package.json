@@ -36,6 +36,7 @@
         "@tanstack/table-core": "^8.21.3",
         "vue-i18n": "catalog:web",
         "nuxt-svgo": "catalog:web",
+        "r2r-js": "^0.4.43",
         "reka-ui": "catalog:web",
         "echarts": "catalog:web",
         "vuedraggable": "catalog:web",

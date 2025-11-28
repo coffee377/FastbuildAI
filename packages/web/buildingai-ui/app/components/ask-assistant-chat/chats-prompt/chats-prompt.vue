@@ -10,38 +10,63 @@ interface TextareaInstance {
     textareaRef: HTMLTextAreaElement | null;
 }
 
+export interface MetaConfiguration {
+    /**
+     * 是否启用会话记忆
+     */
+    memory?: boolean;
+    /**
+     * 是否启用问题重写
+     */
+    rewrite?: boolean;
+    /**
+     * 知识库
+     */
+    kb?: { id: string; name: string };
+    /**
+     * 添加的文件
+     */
+    files?: File[];
+}
+
 const emits = defineEmits<{
     (e: "update:modelValue", v: string): void;
+    (e: "update:metaConfiguration", v: MetaConfiguration): void;
     (e: "update:fileList", v: FilesList): void;
-    (e: "submit", v: string): void;
+    (e: "submit", v: string, meta?: MetaConfiguration): void;
     (e: "stop"): void;
 }>();
 
-const props = withDefaults(
-    defineProps<{
-        modelValue: string;
-        fileList?: FilesList;
-        placeholder?: string;
-        isLoading?: boolean;
-        rows?: number;
-        needAuth?: boolean;
-        attachmentSizeLimit?: number;
-    }>(),
-    {
-        modelValue: "",
-        fileList: () => [],
-        placeholder: "",
-        isLoading: false,
-        rows: 1,
-        needAuth: false,
-        attachmentSizeLimit: 10,
-    },
-);
+interface ChatPromptProps {
+    modelValue: string;
+    metaConfiguration?: MetaConfiguration;
+    fileList?: FilesList;
+    placeholder?: string;
+    isLoading?: boolean;
+    rows?: number;
+    needAuth?: boolean;
+    attachmentSizeLimit?: number;
+    debug?: boolean;
+}
+
+const props = withDefaults(defineProps<ChatPromptProps>(), {
+    modelValue: "",
+    metaConfiguration: () => ({ memory: true, rewrite: false }),
+    fileList: () => [],
+    placeholder: "",
+    isLoading: false,
+    rows: 1,
+    needAuth: false,
+    attachmentSizeLimit: 10,
+    debug: true,
+});
 
 const uTextareaRefs = useTemplateRef<TextareaInstance | null>("uTextareaRefs");
 const textareaElement = computed(() => uTextareaRefs.value?.textareaRef || null);
 const inputValue = useVModel(props, "modelValue", emits);
 const filesList = useVModel(props, "fileList", emits);
+const meta = useVModel(props, "metaConfiguration", emits);
+
 const { t } = useI18n();
 const userStore = useUserStore();
 const toast = useMessage();
@@ -90,7 +115,7 @@ function handleKeydown(event: KeyboardEvent) {
         if (props.isLoading) {
             emits("stop");
         } else {
-            emits("submit", inputValue.value);
+            emits("submit", inputValue.value, unref(meta));
         }
     }
 }
@@ -100,7 +125,7 @@ function handleSubmit() {
         emits("stop");
     } else {
         if (!canSubmit.value) return;
-        emits("submit", inputValue.value);
+        emits("submit", inputValue.value, unref(meta));
     }
 }
 
@@ -200,6 +225,7 @@ onMounted(() =>
         :class="isFocused ? 'ring-primary/15 border-primary ring-3' : 'border-border'"
         @click.stop="handleFocus"
     >
+        <div v-if="debug" class="border border-dashed border-red-500">{{ meta }}</div>
         <div class="flex items-center gap-2">
             <slot name="panel-top"> </slot>
         </div>
@@ -239,6 +265,9 @@ onMounted(() =>
                         <!--  -->
                     </div>
                 </slot>
+                <KnowledgeSelect v-model="meta.kb" />
+                <UCheckbox label="启用会话记忆" v-model="meta.memory" />
+                <UCheckbox label="启用问题重写" v-model="meta.rewrite" />
             </div>
             <!-- Send -->
             <slot name="panel-right">
